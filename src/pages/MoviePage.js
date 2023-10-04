@@ -1,64 +1,70 @@
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {Link, useParams} from "react-router-dom";
-import https from "../utils/https";
-import { Box, CardMedia, Grid, Typography } from "@mui/material";
-import MediaCard from "../components/MediaCard";
+import { Box, Card, CardMedia, Typography } from "@mui/material";
+import useMovieStore from "../stores/movieStore";
 
-const MoviePage = () =>{
-    const params = useParams();
-    const[detailsMovies,setDetailsMovies] = useState(null);
-    
-    console.log('params =>',params);
+const MoviePage = () => {
+  const params = useParams();
+  const [movie, setMovie] = useState(null);
+  const getSingleMovie = useMovieStore((state) => state.getSingleMovie);
 
-    useEffect(() =>{
-      fetchDetailsMovies();
-      console.log('Second use effect');
-    },[]);
-  
-    const fetchDetailsMovies = async () => {
-        try{
-          const resp = await https.get(`/movie/${params.id}`)
-          setDetailsMovies(resp.data);
-          console.log('resp =>', resp);
-          console.log('resp.data =>', resp.data);
-  
-        return 'success';
-        } catch(err){
-          // handle error
-        }  finally {
-          // executed if success or fail
-        }
-      }
-    
-    if(!detailsMovies){
-        return(
-            <div>Loading ..</div>
-        )
+  useEffect(() => {
+    fetchMovieDetails();
+  }, []);
+
+  const fetchMovieDetails = async () => {
+    try {
+      const movie = await getSingleMovie(Number(params.id));
+      setMovie(movie);
+    } catch (err) {
+      console.error(err);
     }
+  }
 
-    return (
-      <div className="App">
+  if (!movie) {
+    return <div>Loading...</div>
+  }
+
+  return (
+    <div>
       <CardMedia
-        sx={{ width:'100%',height: 450 }}
-        image= {`https://image.tmdb.org/t/p/original/${detailsMovies.poster_path}`}
-        title= {detailsMovies.title}
+        sx={{ width: '100%', height: 450 }}
+        image={`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`}
+        title={movie.title}
       />
-      
+
       <Box maxWidth={600} margin='auto'>
-       <Grid container spacing={2}>
-           <Grid item lg={12} md={12} sm={12} xs={12} key={detailsMovies.id}>
-              <MediaCard 
-                title = {detailsMovies.title}
-                overview = {detailsMovies.overview}
-                posterpath = {detailsMovies.poster_path}
-              />
-              <Link to={`/movie/${detailsMovies.id}/images`}>Media
-              </Link>  
-            </Grid>
-        </Grid>
-        </Box>  
-      </div>
-    );
+        <Box display="flex">
+          <Card style={{ width: 250, position: 'relative', top: -100 }}>
+            <CardMedia
+              sx={{ width: '100%', height: 300 }}
+              image={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+              title={movie.title}
+            />
+          </Card>
+
+          <Box padding={4}>
+            <Typography variant="subtitle2">
+              Rating
+            </Typography>
+            <Typography variant="h6" marginBottom={2}>
+              {movie.vote_average}
+            </Typography>
+          </Box>
+        </Box>
+
+        <Box position="relative" top={-70} marginBottom={4}>
+          <Typography variant="h3" marginBottom={4}>
+            {movie.title}
+          </Typography>
+
+          <Typography variant="body1">
+            {movie.overview}
+          </Typography>
+        </Box>
+      </Box>
+    </div>
+  )
 }
 
 export default MoviePage;

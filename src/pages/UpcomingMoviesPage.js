@@ -1,39 +1,32 @@
-import { useEffect, useState } from "react";
-import https from "../utils/https";
-import MoviesList from "../components/MoviesList";
-import useMovieStore from "../stores/movieStore";
+import { useEffect } from 'react';
+import MoviesList from '../components/MoviesList';
+import useMovieStore from '../stores/movieStore';
 
-function UpcomingMoviesPage() {
-    // const[togglebtn,setToggleBtn] = useState(false);
-    // const[upcomingMovies,setUpcomingMovies] = useState([]);
-    const upcomingMovies = useMovieStore((state) => state.upcomingMovies);
-    const getUpcomingMovies = useMovieStore((state)=> state.getUpcomingMovies)
+const UpcomingMoviesPage = () => {
+  const upcomingMovies = useMovieStore((state) => state.upcomingMovies);
+  const getUpcomingMovies = useMovieStore((state) => state.getUpcomingMovies);
 
-
-    useEffect(() =>{
-    fetchUpcomingMovies();
-    console.log('Second use effect');
-    },[]);
-
-    const fetchUpcomingMovies = async () => {
-        try{
-            await getUpcomingMovies();
-            return 'success';
-        
-        } catch(err){
-        // handle error
-        }  finally {
-        // executed if success or fail
-        }
+  useEffect(() => {
+    if (upcomingMovies.length === 0) {
+      fetchUpcomingMovies();
     }
-    return (
-    <div className="App">
-     <MoviesList
-        movies={upcomingMovies}
-        title= 'Upcoming Movies'
-      />
-    </div>
-    );
-}
+  }, []);
+
+  const fetchUpcomingMovies = async () => {
+    try {
+      await getUpcomingMovies();
+      return 'success';
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  return (
+    <MoviesList
+      movies={upcomingMovies}
+      title="Upcoming Movies"
+    />
+  );
+};
 
 export default UpcomingMoviesPage;

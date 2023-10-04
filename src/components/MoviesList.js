@@ -1,28 +1,29 @@
-import MediaCard from "../components/MediaCard";
 import { Box, Grid, Typography } from "@mui/material";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import MediaCard from "./MediaCard";
 
-const MoviesList = ({movies, title}) => {
+const MoviesList = ({ movies, title }) => {
   return (
     <Box padding={4}>
-    <Typography noWrap gutterBottom variant="h3" component="div">
+      <Typography variant='h3' marginBottom={8}>
         {title}
-        </Typography>  
-    <Grid container spacing={2}>
-        {movies.map((movie)=>(
-          <Grid item lg={3} md={4} sm={6} xs={12} key={movie.id}>
-            <Link to={`/movie/${movie.id}`}>
-            <MediaCard 
-              title = {movie.title}
-              overview = {movie.overview}
-              posterpath = {movie.poster_path}
-            />
+      </Typography>
+
+      <Grid container spacing={2}>
+        {movies.map((movie) => (
+          <Grid item lg={2} md={3} sm={4} xs={12} key={movie.id}>
+            <Link to={`/movies/${movie.id}`}>
+              <MediaCard
+                title={movie.title}
+                overview={movie.overview}
+                posterPath={movie.poster_path}
+              />
             </Link>
           </Grid>
         ))}
       </Grid>
-      </Box>  
-  );
+    </Box>
+  )
 }
 
 export default MoviesList;

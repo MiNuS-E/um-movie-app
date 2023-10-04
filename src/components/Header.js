@@ -12,18 +12,19 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-// const pages = ['Products', 'Pricing', 'Blog'];
 // const pages = ['Popular', 'Upcoming'];
+const settings = ['Logout'];
 
 const pages = [
-  { name:'Popular', path:'/'},
-  { name:'Upcoming', path:'/upcoming'}
+  { nama: 'Popular', path: '/' },
+  { nama: 'Upcoming', path: '/upcoming' },
 ]
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function Header() {
+const Header = () => {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -41,6 +42,11 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const onClickLogout = () => {
+    Cookies.remove('token');
+    navigate('/login');
+  }
 
   return (
     <AppBar position="static">
@@ -95,10 +101,10 @@ function Header() {
               }}
             >
               {pages.map((page) => (
-                 <Link key={page.name} to={page.path}>
-                <MenuItem  onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page.name}</Typography>
-                </MenuItem>
+                <Link key={page.nama} to={page.path}>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">{page.nama}</Typography>
+                  </MenuItem>
                 </Link>
               ))}
             </Menu>
@@ -124,12 +130,12 @@ function Header() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Link key={page.name} to={page.path}>
+              <Link key={page.nama} to={page.path}>
                 <Button
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: 'white', display: 'block' }}
                 >
-                  {page.name}
+                  {page.nama}
                 </Button>
               </Link>
             ))}
@@ -157,11 +163,9 @@ function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem onClick={onClickLogout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
